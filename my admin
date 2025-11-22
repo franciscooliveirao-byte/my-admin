@@ -1,0 +1,65 @@
+â€“ Villa Hub ADM (Compact) â€“ NOTE: This is a simplified but functional
+server-side admin hub template. â€“ Add RemoteEvents, GUI, and handlers as
+needed.
+
+local Players = game:GetService(â€œPlayersâ€) local RS =
+game:GetService(â€œReplicatedStorageâ€)
+
+â€“ RemoteEvents local events = Instance.new(â€œFolderâ€, RS) events.Name =
+â€œVillaHubEventsâ€
+
+local cmds = {} local prefix1,prefix2 = â€œ/â€,â€œ;â€
+
+â€“ Utility local function findPlayer(name) for _,p in
+pairs(Players:GetPlayers()) do if p.Name:lower():sub(1,#name) ==
+name:lower() then return p end end end
+
+â€“ Commands cmds[â€œkillâ€] = function(sender, target) local pl =
+findPlayer(target) if pl and pl.Character and
+pl.Character:FindFirstChild(â€œHumanoidâ€) then
+pl.Character.Humanoid.Health = 0 end end
+
+cmds[â€œbringâ€] = function(sender, target) local pl = findPlayer(target)
+if pl and pl.Character and sender.Character then
+pl.Character:MoveTo(sender.Character.HumanoidRootPart.Position) end end
+
+cmds[â€œtpâ€] = function(sender, target) local pl = findPlayer(target) if
+pl and pl.Character and sender.Character then
+sender.Character:MoveTo(pl.Character.HumanoidRootPart.Position) end end
+
+cmds[â€œspeedâ€] = function(sender, number) local n = tonumber(number) if
+sender.Character and n then sender.Character.Humanoid.WalkSpeed = n end
+end
+
+cmds[â€œjumpâ€] = function(sender, number) local n = tonumber(number) if
+sender.Character and n then sender.Character.Humanoid.JumpPower = n end
+end
+
+cmds[â€œflyâ€] = function(sender, number) â€“ placeholder fly system
+print(â€œFly system placeholder. Add BodyVelocity for full fly.â€) end
+
+cmds[â€œgodmodâ€] = function(sender, target) local pl = findPlayer(target)
+if pl and pl.Character and pl.Character:FindFirstChild(â€œHumanoidâ€) then
+pl.Character.Humanoid.MaxHealth = math.huge pl.Character.Humanoid.Health
+= math.huge end end
+
+cmds[â€œflashbangâ€] = function(sender, target) print(â€œFlashbang event
+triggered for:â€, target) end
+
+cmds[â€œjumpscareâ€] = function(sender, target) print(â€œJumpscare event
+triggered for:â€, target) end
+
+cmds[â€œanuncioâ€] = function(sender, â€¦) print(â€œANUNCIO:â€,
+table.concat({â€¦}, â€ â€œ)) end
+
+Players.PlayerAdded:Connect(function(plr)
+plr.Chatted:Connect(function(msg) local raw = msg if
+raw:sub(1,1)==prefix1 or raw:sub(1,1)==prefix2 then raw = raw:sub(2)
+local split = string.split(raw, â€ â€œ) local cmd = split[1]:lower()
+table.remove(split,1) if cmds[cmd] then cmdscmd end end end) end)
+
+â€“ Music IDs placeholder local musicIDs = { pagode =
+{111111111,222222222}, funk = {333333333,444444444}, phonk =
+{555555555,666666666}, memes = {777777777,888888888} }
+
+return true
